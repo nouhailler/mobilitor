@@ -134,7 +134,15 @@ export function MobilityMap({
     [areas, setAreas] = useState(true);
   return (
     <div className="map-frame" id="map-export">
-      <MapContainer center={[48.8566, 2.3522]} zoom={12} preferCanvas className="map">
+      <MapContainer
+        bounds={[
+          [41.3, -5.3],
+          [51.2, 9.7],
+        ]}
+        boundsOptions={{ padding: [16, 16] }}
+        preferCanvas
+        className="map"
+      >
         <Resize />
         {onlineTiles && (
           <TileLayer
@@ -160,7 +168,7 @@ export function MobilityMap({
         ))}
       </MapContainer>
       <div className="map-label">
-        <span className="eyebrow">ÎLE-DE-FRANCE</span>
+        <span className="eyebrow">FRANCE</span>
         <strong>Votre territoire, à votre rythme.</strong>
         {!onlineTiles && (
           <small>Fond externe désactivé · couches importées disponibles hors ligne</small>

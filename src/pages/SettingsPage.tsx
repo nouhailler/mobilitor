@@ -6,11 +6,11 @@ import { requestPersistence } from '../services/storageService';
 export function SettingsPage() {
   const places = useLiveQuery(() => db.savedPlaces.toArray(), [], []),
     scenarios = useLiveQuery(() => db.savedScenarios.toArray(), [], []);
-  const [tiles, setTiles] = useState(false),
+  const [tiles, setTiles] = useState(true),
     [threshold, setThreshold] = useState(30),
     [message, setMessage] = useState('');
   useEffect(() => {
-    void db.preferences.get('onlineTiles').then((p) => setTiles(p?.value === true));
+    void db.preferences.get('onlineTiles').then((p) => setTiles(p?.value !== false));
     void db.preferences.get('threshold').then((p) => {
       if ([15, 30, 45, 60].includes(Number(p?.value))) setThreshold(Number(p?.value));
     });
@@ -22,7 +22,7 @@ export function SettingsPage() {
       return;
     await clearAll();
     for (const name of await caches.keys()) await caches.delete(name);
-    setTiles(false);
+    setTiles(true);
     setMessage(
       'Données et caches effacés. Reconnectez-vous et rechargez pour préparer à nouveau le mode hors ligne.',
     );

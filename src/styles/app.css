@@ -724,7 +724,7 @@ footer span {
     display: none;
   }
 }
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   .explorer {
     display: flex;
     flex-direction: column;

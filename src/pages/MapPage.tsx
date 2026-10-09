@@ -40,10 +40,10 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
     [error, setError] = useState(''),
     [progress, setProgress] = useState(''),
     [route, setRoute] = useState(false),
-    [onlineTiles, setOnlineTiles] = useState(false);
+    [onlineTiles, setOnlineTiles] = useState(true);
   const controller = useRef<AbortController | null>(null);
   useEffect(() => {
-    void db.preferences.get('onlineTiles').then((p) => setOnlineTiles(p?.value === true));
+    void db.preferences.get('onlineTiles').then((p) => setOnlineTiles(p?.value !== false));
     void db.preferences.get('threshold').then((p) => {
       if ([15, 30, 45, 60].includes(Number(p?.value))) setThreshold(Number(p?.value));
     });

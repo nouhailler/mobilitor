@@ -40,7 +40,7 @@ Le fichier `data/fixtures/synthetic-gtfs.zip` est une **fixture synthétique de 
 - Limites : fichier compressé 40 Mo, décompressé 250 Mo, 500 000 horaires. Import en Worker, validation en mémoire puis écriture par lots transactionnelle. Routage charge uniquement le flux sélectionné en Worker, avec calcul annulable. Prévoir approximativement **12 fois la taille compressée** libre ; dépend fortement du contenu. Les imports volumineux régionaux complets nécessitent une préparation, pas seulement une augmentation de quota.
 - Carte : 1 500 stations maximum dans l’emprise, 500 tracés, 200 limites et 2 000 symboles d’isochrone par origine maximum. Les comptes et exports ne sont pas tronqués. Les shapes GTFS sont conservées pour provenance mais ne sont pas tracées ; importer les tracés en GeoJSON. Recherche locale limitée à 40 résultats.
 - Scénarios enregistrés consultables, réouvrables et supprimables. Fond de carte et seuil par défaut persistés ; un seul moteur disponible.
-- Téléchargement direct et import de fond hors ligne non implémentés. Import manuel sans proxy ; fond OSM en ligne facultatif, sans cache applicatif.
+- Téléchargement direct et import de fond hors ligne non implémentés. Import manuel sans proxy ; fond OSM en ligne activé par défaut, désactivable dans Paramètres, sans cache applicatif. La carte s’ouvre sur la France métropolitaine, Corse comprise.
 
 ## Disposer des transports hors ligne
 
