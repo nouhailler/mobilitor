@@ -1,0 +1,58 @@
+export const sourceRegistry = [
+  {
+    name: 'Gares et stations du réseau ferré',
+    provider: 'Île-de-France Mobilités',
+    url: 'https://data.iledefrance-mobilites.fr/explore/dataset/emplacement-des-gares-idf-data-generalisee/',
+    format: 'GeoJSON / CSV',
+    license: 'Licence ouverte (données de référence ; vérifier la fiche du fichier)',
+    fields: 'nom_gares, géométrie Point',
+    limits: 'Réseau ferré uniquement ; pas d’horaires.',
+  },
+  {
+    name: 'Tracés du réseau ferré',
+    provider: 'Île-de-France Mobilités',
+    url: 'https://data.iledefrance-mobilites.fr/explore/dataset/traces-du-reseau-ferre-idf/',
+    format: 'GeoJSON',
+    license: 'Licence ouverte (référence IDFM)',
+    fields: 'géométrie et nom de ligne',
+    limits: 'Affichage cartographique, ne crée aucune liaison de routage.',
+  },
+  {
+    name: 'Offre théorique GTFS',
+    provider: 'Île-de-France Mobilités',
+    url: 'https://www.data.gouv.fr/datasets/reseau-urbain-et-interurbain-dile-de-france-mobilites',
+    format: 'ZIP GTFS',
+    license:
+      'Vérifier la licence de la ressource ; PRIM distingue Licence Mobilité et ODbL pour l’offre',
+    fields: 'agency, stops, routes, trips, stop_times, calendar, calendar_dates, transfers',
+    limits: 'Sous-réseau nécessaire pour les flux volumineux. Pas de téléchargement direct testé.',
+  },
+  {
+    name: 'Arrondissements de Paris',
+    provider: 'Ville de Paris — Direction de l’Urbanisme',
+    url: 'https://opendata.paris.fr/explore/dataset/arrondissements/',
+    format: 'GeoJSON',
+    license: 'ODbL',
+    fields: 'l_ar, c_arinsee, géométrie',
+    limits: 'Limites administratives ; aucun effet sur les calculs.',
+  },
+  {
+    name: 'Contours des communes',
+    provider: 'Etalab',
+    url: 'https://geo.api.gouv.fr/decoupage-administratif/communes',
+    format: 'GeoJSON, geometry=contour',
+    license: 'À vérifier pour le référentiel sélectionné avant redistribution',
+    fields: 'nom, code, géométrie',
+    limits: 'Aucune redistribution incluse ; import manuel.',
+  },
+  {
+    name: 'Fond OpenStreetMap',
+    provider: 'OpenStreetMap contributors / OSMF',
+    url: 'https://operations.osmfoundation.org/policies/tiles/',
+    format: 'Tuiles raster en ligne',
+    license: 'Données ODbL ; politique de tuiles OSMF distincte',
+    fields: 'Fond visuel uniquement',
+    limits:
+      'Usage hors ligne interdit sur tile.openstreetmap.org ; aucun cache applicatif de tuiles.',
+  },
+] as const;
