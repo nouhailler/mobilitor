@@ -1,18 +1,34 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, type Page } from '@playwright/test';
+async function welcome(page: Page) {
+  await page.getByRole('dialog', { name: 'Bienvenue dans Mobilitor' }).waitFor();
+  await page.getByRole('button', { name: 'Continuer', exact: true }).click();
+  await page.getByRole('button', { name: 'Continuer', exact: true }).click();
+  await page.getByRole('checkbox', { name: /J’ai lu les informations/ }).check();
+  await page.getByRole('button', { name: 'Commencer à explorer' }).click();
+}
+async function navigate(page: Page, name: string) {
+  await page.getByRole('button', { name: 'Ouvrir le menu' }).click();
+  await page
+    .getByRole('navigation', { name: 'Navigation principale' })
+    .getByRole('link', { name, exact: true })
+    .click();
+}
+
 test('installation, import, calcul, favoris et réouverture hors ligne', async ({
   page,
   context,
 }) => {
   await page.goto('/');
+  await welcome(page);
   await expect(page.getByText('Votre carte commence ici.')).toBeVisible();
   await page.evaluate(() => navigator.serviceWorker.ready);
-  await page.getByRole('link', { name: 'Mes données', exact: true }).click();
+  await navigate(page, 'Mes données');
   await page.getByLabel('Fichier à importer').setInputFiles('data/fixtures/synthetic-gtfs.zip');
   await page.getByLabel('Producteur', { exact: true }).fill('Fixture synthétique');
   await page.getByLabel('Licence vérifiée sur la fiche officielle').fill('CC0');
   await page.getByRole('button', { name: 'Valider et installer' }).click();
   await expect(page.getByText(/Import validé/)).toBeVisible({ timeout: 20000 });
-  await page.getByRole('link', { name: 'Explorer', exact: true }).click();
+  await navigate(page, 'Explorer');
   await page.getByLabel('Point de départ').fill('Alpha');
   await page.getByRole('button', { name: /Test Alpha/ }).click();
   await page.getByLabel('Date de départ').fill('2026-10-09');
@@ -28,7 +44,7 @@ test('installation, import, calcul, favoris et réouverture hors ligne', async (
   await page.getByLabel('Date de départ').fill('2026-10-09');
   await page.getByRole('button', { name: 'Calculer mon isochrone' }).click();
   await expect(page.getByRole('heading', { name: '3 arrêts atteignables' })).toBeVisible();
-  await page.getByRole('link', { name: 'Paramètres', exact: true }).click();
+  await navigate(page, 'Paramètres');
   await expect(page.getByText('Test Alpha', { exact: true })).toBeVisible();
   const manifest = await page.evaluate(async () => {
     const r = await fetch('/manifest.webmanifest');
@@ -38,6 +54,7 @@ test('installation, import, calcul, favoris et réouverture hors ligne', async (
 });
 test('aucune donnée inventée hors ligne', async ({ page, context }) => {
   await page.goto('/');
+  await welcome(page);
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
   await context.setOffline(true);
@@ -50,12 +67,13 @@ test('trajet, comparaison, exports, scénario et suppression explicite', async (
   const errors: string[] = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto('/#/donnees');
+  await welcome(page);
   await page.getByLabel('Fichier à importer').setInputFiles('data/fixtures/synthetic-gtfs.zip');
   await page.getByLabel('Producteur', { exact: true }).fill('Fixture synthétique');
   await page.getByLabel('Licence vérifiée sur la fiche officielle').fill('CC0');
   await page.getByRole('button', { name: 'Valider et installer' }).click();
   await expect(page.getByText(/Import validé/)).toBeVisible();
-  await page.getByRole('link', { name: 'Explorer', exact: true }).click();
+  await navigate(page, 'Explorer');
   await page.getByRole('button', { name: 'Itinéraire', exact: true }).click();
   await page.getByLabel('Point de départ').fill('Alpha');
   await page.getByRole('button', { name: /Test Alpha/ }).click();
@@ -64,7 +82,7 @@ test('trajet, comparaison, exports, scénario et suppression explicite', async (
   await page.getByLabel('Date de départ').fill('2026-10-09');
   await page.getByRole('button', { name: 'Trouver mon itinéraire' }).click();
   await expect(page.getByText('25 min', { exact: true })).toBeVisible();
-  await page.getByRole('link', { name: 'Comparer', exact: true }).click();
+  await navigate(page, 'Comparer');
   await expect(page.getByRole('heading', { name: 'Comparez vos points de départ.' })).toBeVisible();
   await page.getByLabel('Point de départ').fill('Alpha');
   await page.getByRole('button', { name: /Test Alpha/ }).click();
@@ -82,11 +100,11 @@ test('trajet, comparaison, exports, scénario et suppression explicite', async (
   expect((await pngDownload).suggestedFilename()).toBe('mobilite-carte.png');
   await page.getByRole('button', { name: 'Enregistrer le scénario' }).click();
   await expect(page.getByText('Scénario enregistré.')).toBeVisible();
-  await page.getByRole('link', { name: 'Paramètres', exact: true }).click();
+  await navigate(page, 'Paramètres');
   await page.getByRole('link', { name: 'Rouvrir ce scénario' }).click();
   await expect(page.getByLabel('Point de départ')).toHaveValue('Test Alpha');
   await expect(page.getByLabel('Origine 2', { exact: true })).toHaveValue('Test Bravo');
-  await page.getByRole('link', { name: 'Mes données', exact: true }).click();
+  await navigate(page, 'Mes données');
   page.once('dialog', (d) => d.accept());
   await page.getByRole('button', { name: 'Supprimer ce jeu' }).click();
   await expect(page.getByText(/Aucun jeu installé/)).toBeVisible();
@@ -96,6 +114,7 @@ test('trajet, comparaison, exports, scénario et suppression explicite', async (
 test('interface mobile sans débordement horizontal', async ({ page }) => {
   await page.setViewportSize({ width: 390, height: 844 });
   await page.goto('/');
+  await welcome(page);
   await expect(page.getByRole('heading', { name: 'Jusqu’où pouvez-vous aller ?' })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
     true,

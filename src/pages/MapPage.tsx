@@ -5,6 +5,7 @@ import { toPng } from 'html-to-image';
 import { db } from '../db/database';
 import type { Station } from '../db/schema';
 import { StationSearch } from '../components/StationSearch';
+import { HelpTip } from '../components/HelpTip';
 import { MobilityMap } from '../components/MobilityMap';
 import { calculateRoute, compareOrigins } from '../services/routeService';
 import { exportGeoJSON } from '../routing/geometry';
@@ -296,7 +297,10 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
             <option disabled>Marche · réseau piéton absent</option>
           </select>
         </label>
-        <label>Temps disponible</label>
+        <label>
+          Temps disponible{' '}
+          <HelpTip text="Sélectionnez le temps maximal depuis le départ, attente comprise. Les seuils filtrent le même calcul de 60 minutes. Les exports suivent le seuil sélectionné." />
+        </label>
         <div className="thresholds">
           {[15, 30, 45, 60].map((n) => (
             <button

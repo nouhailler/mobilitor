@@ -4,6 +4,11 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import 'leaflet/dist/leaflet.css';
 import './styles/app.css';
+import './styles/enhancements.css';
+import { updates } from './services/updateService';
+import { captureInstallPrompt } from './components/InstallButton';
+captureInstallPrompt();
+void updates.start();
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <RouterProvider router={router} />

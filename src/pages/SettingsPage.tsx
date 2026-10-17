@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, clearAll } from '../db/database';
+import { useAppTheme } from '../components/RuntimeContext';
+import type { Theme } from '../hooks/useTheme';
 import { requestPersistence } from '../services/storageService';
 export function SettingsPage() {
+  const { theme, setTheme } = useAppTheme();
   const places = useLiveQuery(() => db.savedPlaces.toArray(), [], []),
     scenarios = useLiveQuery(() => db.savedScenarios.toArray(), [], []);
   const [tiles, setTiles] = useState(true),
@@ -31,6 +34,22 @@ export function SettingsPage() {
     <main className="content-page narrow">
       <span className="eyebrow">SUR CET APPAREIL</span>
       <h1>Vous gardez le contrôle.</h1>
+      <section className="card">
+        <h2>Apparence</h2>
+        <label>
+          Thème de l’interface
+          <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
+            <option value="system">Automatique · suivre le système</option>
+            <option value="light">Clair</option>
+            <option value="dark">Sombre</option>
+          </select>
+        </label>
+        <p>
+          Ce choix est enregistré sur cet appareil. Le fond OpenStreetMap reste dans son style
+          d’origine.
+        </p>
+        <Link to="/systeme">Paramètres système, installation et mises à jour →</Link>
+      </section>
       <section className="card">
         <h2>Fond cartographique</h2>
         <label className="toggle">

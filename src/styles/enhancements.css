@@ -1,0 +1,472 @@
+/* Application chrome, accessible guidance and persistent themes. */
+.app-header {
+  gap: 20px;
+  position: relative;
+  z-index: 700;
+}
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.hamburger {
+  white-space: nowrap;
+  font-size: 18px;
+  background: #edf3e8;
+}
+.hamburger span {
+  font-size: 12px;
+  margin-left: 7px;
+}
+.connection {
+  margin-left: 0;
+}
+.theme-toggle {
+  font-size: 20px;
+  width: 42px;
+  height: 42px;
+  padding: 6px;
+}
+.install-button {
+  font-size: 11px;
+  white-space: nowrap;
+  border-color: #c1d6bc;
+}
+.app-dialog {
+  color: inherit;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 28px;
+  width: min(620px, calc(100vw - 32px));
+  max-height: 85dvh;
+  overflow: auto;
+  box-shadow: 0 24px 90px #082e3650;
+}
+.app-dialog::backdrop {
+  background: #122c2bb3;
+  backdrop-filter: blur(3px);
+}
+.dialog-heading {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 15px;
+}
+.dialog-heading h2 {
+  font-size: 26px;
+  margin: 0 0 20px;
+}
+.dialog-heading button {
+  padding: 6px 11px;
+  flex-shrink: 0;
+}
+.app-dialog p,
+.app-dialog li {
+  font-size: 13px;
+  line-height: 1.8;
+}
+.dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 25px;
+}
+.dialog-actions .primary {
+  width: auto;
+}
+.app-dialog h3 {
+  font-size: 15px;
+}
+.category-nav {
+  display: grid;
+  gap: 16px;
+}
+.category-nav h3 {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #718b79;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 9px;
+}
+.category-nav a {
+  display: flex;
+  align-items: center;
+  gap: 13px;
+  text-decoration: none;
+  border-radius: 9px;
+  padding: 10px;
+  font-size: 14px;
+}
+.category-nav a:hover,
+.category-nav a.active {
+  background: #edf3e8;
+}
+.category-nav a > span:first-child {
+  width: 28px;
+  font-size: 21px;
+}
+.category-nav small {
+  display: block;
+  color: #738c7b;
+  margin-top: 3px;
+}
+.category-nav + .install-button {
+  width: 100%;
+  margin-top: 20px;
+}
+.contextual-help {
+  background: #edf3e7;
+  border-bottom: 1px solid #d7e4cc;
+  padding: 10px 30px;
+  color: #345d44;
+  font-size: 12px;
+}
+.help-toggle {
+  border: 0;
+  background: transparent;
+  padding: 4px 0;
+  color: inherit;
+  font-size: 11px;
+}
+.help-body {
+  max-width: 1000px;
+  margin: 5px auto 10px;
+}
+.help-body ol {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 25px;
+  line-height: 1.7;
+  padding-left: 20px;
+}
+.help-body button {
+  font-size: 11px;
+  padding: 7px 12px;
+}
+.help-tip {
+  display: inline-block;
+  position: relative;
+  font-weight: 400;
+  vertical-align: middle;
+  margin-left: 5px;
+}
+.tip-trigger {
+  border: 0;
+  background: transparent;
+  padding: 2px 4px;
+  color: #507a66;
+  font-size: 13px;
+  line-height: 1.3;
+}
+.tip-content {
+  display: none;
+  position: absolute;
+  bottom: calc(100% + 7px);
+  right: 0;
+  width: min(265px, 70vw);
+  background: #1e4239;
+  color: #fff;
+  z-index: 2100;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.7;
+  padding: 12px 14px;
+  border-radius: 9px;
+  box-shadow: 0 5px 25px #0003;
+  text-align: left;
+}
+.tip-content.is-open {
+  display: block;
+}
+#page-content label > .help-tip {
+  margin-top: 5px;
+}
+.system-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  font-size: 12px;
+  line-height: 1.8;
+}
+.system-info dt {
+  color: #708774;
+}
+.system-info dd {
+  margin: 0;
+  word-break: break-word;
+}
+.system-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.system-actions .primary {
+  width: auto;
+}
+.legal-notice h3 {
+  margin-top: 24px;
+}
+.legal-notice p {
+  line-height: 1.8;
+}
+.theme-toggle:focus-visible,
+.tip-trigger:focus-visible {
+  outline: 3px solid #dca768;
+}
+:root[data-theme='dark'] {
+  color: #dfebe3;
+  background: #121d1a;
+  --green: #8bd2b4;
+  --border: #3a4e44;
+  color-scheme: dark;
+}
+[data-theme='dark'] body,
+[data-theme='dark'] .content-page {
+  background: #121d1a;
+  color: #dfebe3;
+}
+[data-theme='dark'] .app-header,
+[data-theme='dark'] footer,
+[data-theme='dark'] .explore-panel,
+[data-theme='dark'] .card,
+[data-theme='dark'] .app-dialog,
+[data-theme='dark'] .suggestions {
+  background: #1a2923;
+  color: #dfebe3;
+  border-color: var(--border);
+}
+[data-theme='dark'] .brand {
+  color: #b0dfc8;
+}
+[data-theme='dark'] button {
+  color: #d0e8da;
+  background: #273a30;
+  border-color: #45604e;
+}
+[data-theme='dark'] button:hover {
+  background: #344e3f;
+}
+[data-theme='dark'] input,
+[data-theme='dark'] select {
+  background: #14221c;
+  color: #e0eee5;
+  border-color: #4a6554;
+}
+[data-theme='dark'] .primary {
+  background: #8ecaaa;
+  color: #0e2d1b;
+  border-color: #8ecaaa;
+}
+[data-theme='dark'] .primary:hover {
+  background: #b0dfc0;
+}
+[data-theme='dark'] .segmented {
+  background: #121d18;
+}
+[data-theme='dark'] .segmented button {
+  background: transparent;
+}
+[data-theme='dark'] .segmented .active {
+  background: #34563f;
+}
+[data-theme='dark'] .thresholds .active {
+  background: #375b43;
+  color: #e8f9e9;
+  border-color: #91c798;
+}
+[data-theme='dark'] .muted,
+[data-theme='dark'] .card p,
+[data-theme='dark'] .card small,
+[data-theme='dark'] .eyebrow,
+[data-theme='dark'] .results small,
+[data-theme='dark'] .explore-panel > .muted,
+[data-theme='dark'] .privacy-note,
+[data-theme='dark'] .lead {
+  color: #b1c5b6;
+}
+[data-theme='dark'] .notice,
+[data-theme='dark'] .empty-card,
+[data-theme='dark'] .storage-card,
+[data-theme='dark'] .upload,
+[data-theme='dark'] .contextual-help {
+  background: #243a2c;
+  color: #c5dfc7;
+  border-color: #4b6550;
+}
+[data-theme='dark'] .empty-card p {
+  color: #b6cbb5;
+}
+[data-theme='dark'] .empty-card a {
+  color: #a6d4aa;
+}
+[data-theme='dark'] .error {
+  background: #482d2c;
+  color: #ffd2c0;
+}
+[data-theme='dark'] .danger {
+  color: #f6b7a6;
+}
+[data-theme='dark'] .badge,
+[data-theme='dark'] .connection {
+  background: #29422d;
+  color: #b2ddb0;
+}
+[data-theme='dark'] .offline-banner {
+  background: #463c22;
+  color: #f7dc99;
+}
+[data-theme='dark'] .update-banner {
+  background: #26412e;
+  color: #c6e3ca;
+}
+[data-theme='dark'] .map-label,
+[data-theme='dark'] .layers,
+[data-theme='dark'] .map-legend {
+  background: #1b3027ed;
+  border-color: #4a6350;
+  color: #d1e6d3;
+}
+[data-theme='dark'] .map-label small {
+  color: #b3cbb5;
+}
+[data-theme='dark'] .map-frame,
+[data-theme='dark'] .map,
+[data-theme='dark'] .leaflet-container {
+  background-color: #1c2c24;
+}
+[data-theme='dark'] .category-nav a:hover,
+[data-theme='dark'] .category-nav a.active {
+  background: #2e4936;
+}
+[data-theme='dark'] .category-nav h3,
+[data-theme='dark'] .category-nav small {
+  color: #b4cbb7;
+}
+[data-theme='dark'] .tip-trigger {
+  color: #b0d9bd;
+}
+[data-theme='dark'] .leaflet-popup-content-wrapper,
+[data-theme='dark'] .leaflet-popup-tip {
+  background: #20382a;
+  color: #dfebe3;
+}
+[data-theme='dark'] .system-info dt {
+  color: #b4c9b9;
+}
+@media (max-width: 900px) {
+  .app-header {
+    padding: 14px 18px;
+    min-height: 75px;
+    gap: 12px;
+  }
+  .header-tools {
+    margin-left: auto;
+    gap: 6px;
+  }
+  .app-header .connection {
+    display: none;
+  }
+  .app-header .install-button {
+    font-size: 10px;
+    padding: 9px;
+  }
+  .hamburger span {
+    display: none;
+  }
+  .app-header nav {
+    order: initial;
+  }
+  .help-body ol {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .contextual-help {
+    padding: 8px 20px;
+  }
+  .app-header .brand {
+    font-size: 22px;
+  }
+  .app-header .brand-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 24px;
+  }
+  .app-header .brand small {
+    font-size: 7px;
+  }
+  .app-header .theme-toggle {
+    width: 35px;
+    height: 35px;
+  }
+  .system-info {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+  .system-info dd {
+    margin-bottom: 12px;
+  }
+}
+@media (max-width: 420px) {
+  .app-header {
+    padding: 12px;
+    gap: 7px;
+  }
+  .app-header .brand {
+    font-size: 19px;
+    gap: 7px;
+  }
+  .app-header .install-button {
+    max-width: 122px;
+    white-space: normal;
+    font-size: 9px;
+    padding: 7px;
+  }
+  .app-header .hamburger {
+    padding: 7px 10px;
+  }
+  .app-header .brand small {
+    letter-spacing: 1px;
+  }
+  .app-dialog {
+    padding: 21px;
+  }
+  .dialog-heading h2 {
+    font-size: 23px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+  }
+}
+.app-header .category-nav {
+  display: grid;
+  margin: 0;
+  height: auto;
+  width: auto;
+  order: initial;
+  gap: 16px;
+  align-self: auto;
+  align-items: stretch;
+}
+.app-header .category-nav a {
+  display: flex;
+  align-items: center;
+  border: 0;
+  padding: 10px;
+  color: var(--green);
+  font-size: 14px;
+}
+.app-header .app-dialog .install-button {
+  max-width: none;
+  width: 100%;
+  padding: 12px;
+  font-size: 12px;
+}
+[data-theme='dark'] .app-header .category-nav a.active {
+  color: #dcf4e4;
+}

@@ -1,15 +1,25 @@
 import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
+import { createHash } from 'node:crypto';
 export default defineConfig({
+  define: {
+    __BUILD_ID__: JSON.stringify(
+      process.env.MOBILITOR_BUILD_ID ||
+        createHash('sha256').update(new Date().toISOString()).digest('hex').slice(0, 12),
+    ),
+  },
   plugins: [
     react(),
     VitePWA({
       registerType: 'prompt',
+      injectRegister: null,
       manifest: false,
       includeAssets: ['favicon.svg', 'icons/*.png', 'manifest.webmanifest'],
       workbox: {
         navigateFallback: 'index.html',
+        skipWaiting: false,
+        clientsClaim: true,
         globPatterns: ['**/*.{js,css,html,svg,png,webmanifest}'],
         cleanupOutdatedCaches: true,
       },

@@ -3,6 +3,9 @@ import { App } from './App';
 import { MapPage } from './pages/MapPage';
 import { DataManagementPage } from './pages/DataManagementPage';
 import { SourcesPage } from './pages/SourcesPage';
+import { SystemPage } from './pages/SystemPage';
+import { LegalNotice } from './components/LegalNotice';
+import { RELEASE } from './release';
 import { SettingsPage } from './pages/SettingsPage';
 export const router = createHashRouter([
   {
@@ -13,12 +16,16 @@ export const router = createHashRouter([
       { path: '/donnees', element: <DataManagementPage /> },
       { path: '/sources', element: <SourcesPage /> },
       { path: '/parametres', element: <SettingsPage /> },
+      { path: '/systeme', element: <SystemPage /> },
       {
         path: '/a-propos',
         element: (
           <main className="content-page narrow">
-            <span className="eyebrow">MOBILITÉ · VERSION 0.1</span>
-            <h1>Une carte à vous.</h1>
+            <span className="eyebrow">MOBILITÉ · VERSION {RELEASE.version}</span>
+            <h1>À propos et mentions légales</h1>
+            <section className="card">
+              <LegalNotice />
+            </section>
             <section className="card">
               <h2>Locale, indépendante, transparente.</h2>
               <p>

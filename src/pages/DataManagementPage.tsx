@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, clearDataset } from '../db/database';
 import { getStorageUsage } from '../services/storageService';
+import { acquireActivity } from '../services/activityService';
 import type { Source } from '../db/schema';
 export function DataManagementPage() {
   const sources = useLiveQuery(() => db.dataSources.toArray(), [], []);
@@ -15,55 +16,69 @@ export function DataManagementPage() {
     [error, setError] = useState(''),
     [busy, setBusy] = useState(false),
     [usage, setUsage] = useState<StorageEstimate>({});
+  const activityRelease = useRef<(() => void) | undefined>(undefined);
   const workerRef = useRef<Worker | null>(null);
   useEffect(() => {
     void getStorageUsage().then(setUsage);
-    return () => workerRef.current?.terminate();
+    return () => {
+      workerRef.current?.terminate();
+      activityRelease.current?.();
+    };
   }, []);
   async function start() {
     if (!file) return;
     setBusy(true);
     setError('');
     setMessage('Démarrage du Worker…');
-    const id = crypto.randomUUID();
-    await db.importJobs.put({
-      id,
-      name: file.name,
-      status: 'running',
-      message: 'Validation en cours',
-      updatedAt: new Date().toISOString(),
-    });
-    const worker = new Worker(new URL('../workers/import.worker.ts', import.meta.url), {
-      type: 'module',
-    });
-    workerRef.current = worker;
-    async function finish(result?: Source, failure?: string) {
-      worker.terminate();
-      workerRef.current = null;
-      setBusy(false);
-      if (failure) {
-        setError(failure);
-        setMessage('');
-      } else
-        setMessage(
-          `Import validé : ${Object.values(result!.counts).reduce((a, b) => a + b, 0)} enregistrements. ${result!.warnings.join(' ')}`,
-        );
-      await db.importJobs.update(id, {
-        status: failure ? 'failed' : 'complete',
-        message: failure || 'Import terminé',
+    activityRelease.current = await acquireActivity();
+    try {
+      const id = crypto.randomUUID();
+      await db.importJobs.put({
+        id,
+        name: file.name,
+        status: 'running',
+        message: 'Validation en cours',
         updatedAt: new Date().toISOString(),
       });
-      setUsage(await getStorageUsage());
+      const worker = new Worker(new URL('../workers/import.worker.ts', import.meta.url), {
+        type: 'module',
+      });
+      workerRef.current = worker;
+      async function finish(result?: Source, failure?: string) {
+        worker.terminate();
+        workerRef.current = null;
+        activityRelease.current?.();
+        activityRelease.current = undefined;
+        setBusy(false);
+        if (failure) {
+          setError(failure);
+          setMessage('');
+        } else
+          setMessage(
+            `Import validé : ${Object.values(result!.counts).reduce((a, b) => a + b, 0)} enregistrements. ${result!.warnings.join(' ')}`,
+          );
+        await db.importJobs.update(id, {
+          status: failure ? 'failed' : 'complete',
+          message: failure || 'Import terminé',
+          updatedAt: new Date().toISOString(),
+        });
+        setUsage(await getStorageUsage());
+      }
+      worker.onmessage = (e) => {
+        if (e.data.progress) setMessage(e.data.progress);
+        else void finish(e.data.result, e.data.error);
+      };
+      worker.onerror = () => void finish(undefined, 'Erreur du Worker d’import.');
+      worker.postMessage({
+        file,
+        metadata: { provider, license, url, attribution, replaceId: replaceId || undefined },
+      });
+    } catch (error) {
+      activityRelease.current?.();
+      activityRelease.current = undefined;
+      setBusy(false);
+      setError(error instanceof Error ? error.message : String(error));
     }
-    worker.onmessage = (e) => {
-      if (e.data.progress) setMessage(e.data.progress);
-      else void finish(e.data.result, e.data.error);
-    };
-    worker.onerror = () => void finish(undefined, 'Erreur du Worker d’import.');
-    worker.postMessage({
-      file,
-      metadata: { provider, license, url, attribution, replaceId: replaceId || undefined },
-    });
   }
   async function remove(id: string) {
     if (
@@ -149,6 +164,8 @@ export function DataManagementPage() {
               onClick={() => {
                 workerRef.current?.terminate();
                 workerRef.current = null;
+                activityRelease.current?.();
+                activityRelease.current = undefined;
                 setBusy(false);
                 setMessage(
                   'Import interrompu. Une transaction en cours est annulée par IndexedDB ; consultez la liste des jeux.',

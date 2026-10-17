@@ -1,15 +1,18 @@
-import { useEffect, useState } from 'react';
-import { NavLink, Outlet, Link } from 'react-router-dom';
-import { useRegisterSW } from 'virtual:pwa-register/react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
+import { Outlet, Link } from 'react-router-dom';
+import { updates } from './services/updateService';
+import { Navigation } from './components/Navigation';
+import { InstallButton } from './components/InstallButton';
+import { ContextualHelp, Welcome } from './components/Onboarding';
+import { FieldHelp } from './components/FieldHelp';
+import { useTheme } from './hooks/useTheme';
+import { ThemeContext } from './components/RuntimeContext';
 import { db } from './db/database';
 export function App() {
   const [online, setOnline] = useState(navigator.onLine),
     [dbError, setDbError] = useState('');
-  const {
-    needRefresh: [refresh],
-    offlineReady: [ready],
-    updateServiceWorker,
-  } = useRegisterSW();
+  const state = useSyncExternalStore(updates.subscribe, updates.getSnapshot);
+  const theme = useTheme();
   useEffect(() => {
     const update = () => setOnline(navigator.onLine);
     window.addEventListener('online', update);
@@ -31,7 +34,7 @@ export function App() {
     };
   }, []);
   return (
-    <>
+    <ThemeContext.Provider value={theme}>
       <header className="app-header">
         <Link className="brand" to="/">
           <span className="brand-icon">m</span>
@@ -39,19 +42,20 @@ export function App() {
             mobilité<small>ISOCHRONES LOCALES</small>
           </span>
         </Link>
-        <nav aria-label="Navigation principale">
-          {[
-            ['/', 'Explorer'],
-            ['/comparaison', 'Comparer'],
-            ['/donnees', 'Mes données'],
-            ['/sources', 'Sources'],
-            ['/parametres', 'Paramètres'],
-          ].map(([path, label]) => (
-            <NavLink key={path} to={path} end={path === '/'}>
-              {label}
-            </NavLink>
-          ))}
-        </nav>
+        <div className="header-tools">
+          <InstallButton />
+          <button
+            className="theme-toggle"
+            aria-label={
+              theme.theme === 'dark' ? 'Activer le thème clair' : 'Activer le thème sombre'
+            }
+            title="Basculer entre les thèmes clair et sombre"
+            onClick={() => theme.setTheme(theme.theme === 'dark' ? 'light' : 'dark')}
+          >
+            {theme.theme === 'dark' ? '☀' : '☾'}
+          </button>
+          <Navigation />
+        </div>
         <span className={`connection ${online ? '' : 'offline'}`}>
           <i />
           {online ? 'Connecté' : 'Hors ligne'}
@@ -62,10 +66,9 @@ export function App() {
           {dbError}
         </div>
       )}
-      {refresh && (
-        <div className="update-banner">
-          Une nouvelle version est prête. Vos données IndexedDB sont conservées.{' '}
-          <button onClick={() => void updateServiceWorker(true)}>Mettre à jour</button>
+      {state.pending && (
+        <div className="update-banner" role="status">
+          {state.message} <Link to="/systeme">Suivre la mise à jour</Link>
         </div>
       )}
       {!online && (
@@ -74,15 +77,20 @@ export function App() {
           indisponible.
         </div>
       )}
-      <Outlet />
+      <ContextualHelp />
+      <div id="page-content">
+        <Outlet />
+      </div>
+      <FieldHelp />
+      <Welcome />
       <footer>
         Calculé ici. Conservé ici. <Link to="/a-propos">À propos & confidentialité</Link>
         <span>
-          {ready
+          {state.ready
             ? 'Application mise en cache ; données à importer séparément.'
             : 'Installation HTTPS nécessaire pour la PWA.'}
         </span>
       </footer>
-    </>
+    </ThemeContext.Provider>
   );
 }

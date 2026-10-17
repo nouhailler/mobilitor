@@ -14,6 +14,7 @@ import { db } from '../db/database';
 import { stationsInBounds } from '../services/stationService';
 import type { Station, GeoRecord } from '../db/schema';
 import type { Result } from '../routing/types';
+import { HelpTip } from './HelpTip';
 import { visualization } from '../routing/geometry';
 const colors = ['#237b66', '#d18a36', '#7f65ad'];
 const originIcon = L.divIcon({
@@ -191,6 +192,7 @@ export function MobilityMap({
         ))}
       </div>
       <div className="map-legend">
+        <HelpTip text="Déplacez ou zoomez la carte. Cliquez sur un point pour chercher un arrêt proche ; activez les couches importées avec les cases. Les disques sont symboliques, sans garantie d’accès piéton." />
         <span className="dot" /> Arrêts importés <span className="legend-rule" /> Tracés importés{' '}
         {results.length > 0 && (
           <small>
