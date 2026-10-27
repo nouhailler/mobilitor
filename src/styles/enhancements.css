@@ -470,3 +470,33 @@
 [data-theme='dark'] .app-header .category-nav a.active {
   color: #dcf4e4;
 }
+.language-selector.compact {
+  width: 96px;
+  flex-shrink: 0;
+}
+.language-selector.compact select {
+  padding: 9px 7px;
+  font-size: 11px;
+  height: 41px;
+}
+.app-dialog > .language-selector {
+  margin-bottom: 22px;
+}
+.language-selector select {
+  margin-top: 6px;
+}
+.language-selector.compact select {
+  margin-top: 0;
+}
+@media (max-width: 600px) {
+  .header-tools {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .language-selector.compact {
+    width: 84px;
+  }
+  .app-header .brand {
+    margin-right: auto;
+  }
+}

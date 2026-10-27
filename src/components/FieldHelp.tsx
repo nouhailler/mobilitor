@@ -1,8 +1,12 @@
+import { t, sourceLabel } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useLocation } from 'react-router-dom';
 import { HelpTip } from './HelpTip';
 const tips: Record<string, string> = {
+  'Langue de l’interface':
+    'Choisissez le français ou l’anglais. Votre choix est conservé sur cet appareil.',
   Arrêts: 'Afficher ou masquer les stations importées dans l’emprise visible (1 500 au maximum).',
   Lignes:
     'Afficher ou masquer les tracés géographiques importés ; ils ne créent pas de connexions de transport.',
@@ -41,6 +45,8 @@ const tips: Record<string, string> = {
 };
 /** Attach visible, keyboard/touch-accessible hints to existing fields without changing label names. */
 export function FieldHelp() {
+  const language = useLocale();
+
   const { pathname } = useLocation();
   const [targets, setTargets] = useState<{ node: HTMLLabelElement; text: string }[]>([]);
   useEffect(() => {
@@ -49,14 +55,15 @@ export function FieldHelp() {
       const next = labels.flatMap((node) => {
         const input = node.querySelector('input,select,textarea');
         if (!input) return [];
-        const name =
+        const name = sourceLabel(
           input.getAttribute('aria-label') ||
-          [...node.childNodes]
-            .filter((n) => n.nodeType === Node.TEXT_NODE)
-            .map((n) => n.textContent)
-            .join('')
-            .trim();
-        if (!input.hasAttribute('aria-label')) input.setAttribute('aria-label', name);
+            [...node.childNodes]
+              .filter((n) => n.nodeType === Node.TEXT_NODE)
+              .map((n) => n.textContent)
+              .join('')
+              .trim(),
+        );
+        input.setAttribute('aria-label', t(name));
         const text = tips[name] || (name.startsWith('Origine') ? tips['Origine 2'] : undefined);
         return text ? [{ node, text }] : [];
       });
@@ -72,7 +79,7 @@ export function FieldHelp() {
     const observer = new MutationObserver(scan);
     if (root) observer.observe(root, { childList: true, subtree: true });
     return () => observer.disconnect();
-  }, [pathname]);
+  }, [pathname, language]);
   return (
     <>
       {targets.map(({ node, text }, index) =>

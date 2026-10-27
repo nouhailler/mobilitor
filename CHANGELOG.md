@@ -1,6 +1,29 @@
 # 📝 Historique
 
-Les changements documentaires non publiés sont séparés des versions applicatives. La version courante de `package.json` est **0.2.0**.
+Les changements documentaires non publiés sont séparés des versions applicatives. La version courante de `package.json` est **0.4.0**.
+
+## 0.4.0 — 2026-10-27
+
+### 🌿 Présentation bilingue
+
+- Landing page autonome en français et en anglais : `/#/presentation/fr`, `/#/presentation/en` et route suivant la langue locale `/#/presentation`.
+- Présentation des fonctions, captures réelles, prise en main en trois étapes, confidentialité, FAQ dépliable et liens d’ouverture/installation de l’application.
+- Lien Présentation dans le menu et le pied de page ; route historique de l’application conservée.
+- Langue partagée, thème clair propre à la présentation sans modifier la préférence de l’app, métadonnées adaptées et mise en page responsive.
+- Captures JPEG allégées et précachées, attribution OSM conservée. Aucun chiffre d’usage ou témoignage fictif.
+- Parcours navigateur ajoutés pour les langues, la FAQ, les mentions légales, l’accès à l’application, l’installation et le mobile.
+
+## 0.3.0 — 2026-10-27
+
+### 🌐 Interface anglaise
+
+- Sélecteur français/anglais dans l’en-tête, l’onboarding et Paramètres ; français conservé par défaut.
+- Langue persistée dans IndexedDB, entrée explicite `?lang=en`, changement sans rechargement ni perte des champs ou résultats en cours.
+- Traduction des écrans, menus, onboarding légal, guides, infobulles, paramètres système, installation et messages connus d’import/routage/mise à jour.
+- Dates adaptées à la langue, fuseau des départs Europe/Paris et données importées inchangés.
+- Catalogue embarqué et manifeste PWA anglais précaché ; aucun service de traduction distant.
+- Infobulles repositionnées au défilement pour rester lisibles avec les textes plus longs.
+- Tests de persistance, parcours anglais et calcul hors ligne ; guide et capture anglais, README et CONTEXT actualisés.
 
 ## 0.2.0 — 2026-10-16
 

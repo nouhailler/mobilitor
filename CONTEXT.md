@@ -1,10 +1,10 @@
 # 🧭 Contexte du projet — Mobilitor
 
-> Dernière mise à jour documentaire : **16 octobre 2026**. Version applicative : **0.2.0** (`package.json` et `src/release.ts`).
+> Dernière mise à jour documentaire : **27 octobre 2026**. Version applicative : **0.4.0** (`package.json` et `src/release.ts`).
 
 ## Mission
 
-Mobilitor est une PWA française de cartographie et de mobilité. La carte s’ouvre sur la France métropolitaine, Corse comprise, avec OpenStreetMap en ligne activé par défaut. Le routage vise les flux GTFS compatibles importés pour l’Île-de-France ; aucune couverture nationale ou régionale exhaustive n’est préinstallée.
+Mobilitor est une PWA française et anglaise de cartographie et de mobilité. La carte s’ouvre sur la France métropolitaine, Corse comprise, avec OpenStreetMap en ligne activé par défaut. Le routage vise les flux GTFS compatibles importés pour l’Île-de-France ; aucune couverture nationale ou régionale exhaustive n’est préinstallée.
 
 **Contraintes à conserver :** aucun backend obligatoire, compte, base distante, télémétrie ou synchronisation implicite. Les données utilisateur et les jeux importés restent sur l’appareil. La géolocalisation est facultative et déclenchée par l’utilisateur.
 
@@ -14,6 +14,7 @@ Mobilitor est une PWA française de cartographie et de mobilité. La carte s’o
 - `43f7685` : version initiale de la PWA, imports, calculs et tests.
 - `e422f41` : carte de France et OpenStreetMap activé par défaut, préférences et documentation associées.
 - Mise à jour documentaire du 16 octobre : README illustré, badges locaux, création de ce contexte et actualisation du changelog. La documentation précédente a été conservée et enrichie pour la version 0.2.0.
+- Version 0.3.0 (27 octobre) : localisation française/anglaise, langue persistée et manifeste anglais.
 - Version 0.2.0 (16 octobre) : menu hamburger catégorisé, paramètres système, mises à jour automatiques protégées, installation guidée, thèmes et onboarding. Les modifications sont locales tant qu’un commit/push n’a pas été demandé pour cette livraison.
 
 ## Architecture réelle
@@ -48,9 +49,31 @@ Les imports acceptent CSV de stations, GeoJSON WGS84 et ZIP GTFS compatibles. Le
 - Carte bornée à 1 500 stations par emprise, 500 tracés et 200 limites ; recherche limitée à 40 réponses. Les shapes GTFS sont conservées mais pas tracées.
 - Aucun téléchargement direct de flux ni fond hors ligne importable. OpenStreetMap nécessite Internet ; ne pas mettre ses tuiles dans un cache hors ligne ou les télécharger massivement.
 
+## Présentation bilingue — 0.4.0
+
+- `/#/presentation/fr` et `/#/presentation/en` : deux versions explicites ; `/#/presentation` suit la langue enregistrée. Les routes sont hors du layout App : pas d’onboarding ni de panneaux de calcul sur la présentation.
+- Application inchangée sur `/#/`. Accès par les CTA de la landing, et lien Présentation dans le menu/pied de l’application.
+- `src/landing/content.ts` contient les deux textes complets ; `src/pages/LandingPage.tsx` partage la structure et `src/styles/landing.css` borne les styles à la présentation.
+- Les captures réelles `public/landing/app-fr.jpg` et `app-en.jpg` sont plus légères que les PNG de documentation ; attribution OSM visible et ressources JPG précachées. Le shell construit représente environ 1,7 Mio avec les deux images.
+- La présentation utilise une palette claire sans écraser le thème enregistré de l’application ; le choix précédent est restauré au retour. Les titres/descriptions suivent la langue, mais les routes hash restent des pages rendues côté client, sans promesse de référencement serveur.
+- Sections : hero avec capture, fonctionnalités, démarrage, confidentialité, FAQ native dépliable et CTA d’installation. Mentions légales consultables sans onboarding via une fenêtre réutilisant LegalNotice.
+- Validation de 0.4.0 : 44 tests et 15 parcours Chromium passent ; captures françaises, anglaises et mobile dans `docs/assets/`.
+- Aucun faux témoignage ni résultat calculé. Les seuils 15/30/45/60 illustrent les options disponibles, pas des données de trajet. Les limitations GTFS/offline et la nécessité d’import sont affichées.
+
+## Localisation française / anglaise — 0.3.0
+
+- Français par défaut, anglais sélectionnable dans l’en-tête, l’onboarding et Paramètres. Préférence `language` (`fr`/`en`) dans IndexedDB ; `?lang=en` avant la route hash permet une entrée anglaise explicite.
+- Catalogue embarqué `src/i18n/en.json` indexé par textes français, sans appel à un traducteur distant. Les messages connus des Workers restent canoniques puis sont traduits à l’affichage ; les diagnostics inconnus restent affichés tels que reçus.
+- `useLocale()` abonne chaque composant à la langue : aucun remontage global ni rechargement à la bascule, donc champs et résultats conservés. Les libellés d’aide conservent leurs clés françaises pour retrouver les infobulles dans les deux langues.
+- `html.lang`, titre, description et lien de manifeste suivent le choix. Le manifeste anglais conserve l’identité `/` et la même origine de stockage ; son `start_url` inclut `?lang=en`. Les deux manifestes sont précachés.
+- Dates d’interface `fr-FR` / `en-GB` ; ne pas modifier les dates de service GTFS, les heures Europe/Paris, identifiants, coordonnées, noms importés ou favoris pour traduire l’interface.
+- Routes hash inchangées. La version de l’avis légal n’est pas modifiée par sa seule traduction.
+- Ajouter les traductions au catalogue et utiliser `t()` à l’affichage ; ne jamais traduire les données utilisateur. Tester français et anglais, ainsi que le retour hors ligne.
+- Guide anglais et capture : [docs/english.md](docs/english.md). Validation 0.3.0 : 44 tests et 12 parcours Chromium passent, dont la bascule avec un résultat conservé et le recalcul hors ligne.
+
 ## Cycle de mise à jour de l’application
 
-- `src/release.ts` : version 0.2.0 et date de sortie 2026-10-16. `vite.config.ts` injecte un identifiant unique à chaque build (ou `MOBILITOR_BUILD_ID` fourni par l’environnement).
+- `src/release.ts` : version 0.4.0 et date de sortie 2026-10-27. `vite.config.ts` injecte un identifiant unique à chaque build (ou `MOBILITOR_BUILD_ID` fourni par l’environnement).
 - `src/main.tsx` enregistre le Service Worker via le gestionnaire natif et capture `beforeinstallprompt` avant le montage React. Ne pas ajouter un second enregistrement automatique du plugin.
 - Workbox : `skipWaiting: false`, `clientsClaim: true`, `injectRegister: null`. Le gestionnaire vérifie au démarrage, retour visible, retour réseau et toutes les 30 minutes ; les ressources sont précachées en arrière-plan.
 - Une version téléchargée attend une pause de 15 secondes sans champ actif (ou une fenêtre masquée), puis l’activation obtient un verrou exclusif. Import et routage détiennent un verrou partagé via `activityService.ts`, y compris entre onglets.

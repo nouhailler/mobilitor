@@ -24,3 +24,23 @@ Environnement : Node 22.23.3, npm 10.9.9, Chromium Playwright sur Linux.
 - Captures de la carte, du thème sombre, du menu, de l’onboarding légal et du système ajoutées à `docs/assets/` et contrôlées visuellement.
 
 Les limites manuelles indiquées au rapport initial restent applicables : vrais gestes d’installation Android/iOS, suspension/éviction par l’OS, essai d’un sous-réseau IDFM réel et transition d’un client 0.1 effectivement déployé vers 0.2. Aucun déploiement distant n’a été effectué. Les coordonnées légales complètes de l’éditeur et de l’hébergeur restent à renseigner pour une diffusion publique.
+
+# Validation de la version 0.3.0 — 27 octobre 2026
+
+- `npm run lint`, `npm run typecheck` et `npm run build` : passent. Le build inclut les deux manifestes et le catalogue anglais, avec environ 957 Kio précachés.
+- `npm run test` : **44 tests**, 7 fichiers, passent ; les 37 tests précédents et 7 tests de localisation.
+- `npm run test:e2e` : **12 parcours Chromium** passent, incluant les 9 parcours français précédents et 3 parcours anglais.
+- Vérifications anglaises : choix dès le premier onboarding, avis légal traduit, menus et écrans, thème et paramètres, infobulles, messages de mise à jour, dates anglaises, installation guidée, mobile sans débordement.
+- Import de la fixture GTFS synthétique en anglais ; erreur de date hors période, puis trajet de 25 minutes ; résultat conservé lors de la bascule français/anglais ; recalcul hors ligne après rechargement. Les noms Test Alpha/Test Charlie et les identifiants sont conservés.
+- Préférence de langue et `html.lang` restaurés ; manifeste anglais accessible hors ligne. Capture réelle ajoutée dans `docs/assets/mobilitor-english.png`.
+
+Les dialogues du système et les tuiles OpenStreetMap conservent les règles et langues de leurs fournisseurs. Les réserves des rapports précédents sur les appareils réels, les coordonnées légales et les flux IDFM restent applicables. Aucune publication ni push distant n’a été effectué dans cette livraison.
+
+# Validation de la version 0.4.0 — 27 octobre 2026
+
+- `npm run lint`, `npm run typecheck`, `npm run build` : passent.
+- `npm run test` : **44 tests** passent, moteur et localisation inchangés.
+- `npm run test:e2e` : **15 parcours Chromium** passent, dont 3 pour la présentation bilingue : FAQ, absence d’onboarding à l’arrivée, mentions légales, langues, entrée dans l’application, conservation du thème et installation guidée.
+- Mobile 390×844 : absence de débordement horizontal et langue conservée après rechargement. Captures bureau 1440×1000, français, anglais et mobile inspectées.
+- Captures JPEG réelles de l’app, environ 676 Kio au total. Build précaché d’environ 1,7 Mio incluant les deux langues et images ; aucun jeu de transport ajouté.
+- Les routes historiques de l’app restent en place. Landing aux routes hash `/presentation/fr`, `/presentation/en` et `/presentation` ; pas de backend, de publication distante ou de push dans cette livraison.

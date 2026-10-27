@@ -1,3 +1,5 @@
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useState } from 'react';
 import { Dialog } from './Dialog';
 interface InstallPrompt extends Event {
@@ -16,6 +18,8 @@ export function captureInstallPrompt() {
   return () => window.removeEventListener('beforeinstallprompt', listener);
 }
 export function InstallButton() {
+  useLocale();
+
   const [installed, setInstalled] = useState(
       () =>
         window.matchMedia('(display-mode: standalone)').matches ||
@@ -64,43 +68,51 @@ export function InstallButton() {
     <>
       <button
         className="install-button"
-        title="Ajouter Mobilitor à l’écran d’accueil ou au bureau"
+        title={t('Ajouter Mobilitor à l’écran d’accueil ou au bureau')}
         disabled={installed || pending}
         onClick={() => void install()}
       >
         {installed
-          ? '✓ Application installée'
+          ? t('✓ Application installée')
           : pending
-            ? 'Installation…'
-            : '↧ Installer l’application'}
+            ? t('Installation…')
+            : t('↧ Installer l’application')}
       </button>
       {guide && (
-        <Dialog title="Installer Mobilitor" onClose={() => setGuide(false)}>
+        <Dialog title={t('Installer Mobilitor')} onClose={() => setGuide(false)}>
           <p>
-            {message ||
-              'Votre navigateur ne propose pas de dialogue automatique sur cette page. Voici comment ajouter Mobilitor à votre appareil.'}
+            {t(message) ||
+              t(
+                'Votre navigateur ne propose pas de dialogue automatique sur cette page. Voici comment ajouter Mobilitor à votre appareil.',
+              )}
           </p>
           <ul>
             <li>
-              <strong>iPhone / iPad :</strong> ouvrir dans Safari, toucher Partager, puis « Sur
-              l’écran d’accueil » et « Ajouter ».
+              <strong>{t('iPhone / iPad :')}</strong>{' '}
+              {t(
+                'ouvrir dans Safari, toucher Partager, puis « Sur l’écran d’accueil » et « Ajouter ».',
+              )}
             </li>
             <li>
-              <strong>Android :</strong> ouvrir dans Chrome ou un navigateur compatible, menu ⋮,
-              puis « Installer l’application » ou « Ajouter à l’écran d’accueil ».
+              <strong>{t('Android :')}</strong>{' '}
+              {t(
+                'ouvrir dans Chrome ou un navigateur compatible, menu ⋮, puis « Installer l’application » ou « Ajouter à l’écran d’accueil ».',
+              )}
             </li>
             <li>
-              <strong>Ordinateur :</strong> utiliser l’icône d’installation près de la barre
-              d’adresse ou le menu « Installer cette page en tant qu’application » de Chrome/Edge.
-              Le libellé dépend du navigateur.
+              <strong>{t('Ordinateur :')}</strong>{' '}
+              {t(
+                'utiliser l’icône d’installation près de la barre d’adresse ou le menu « Installer cette page en tant qu’application » de Chrome/Edge. Le libellé dépend du navigateur.',
+              )}
             </li>
           </ul>
           <p className="muted">
-            Si l’option est absente, ouvrez le site dans un navigateur externe sous HTTPS.
-            L’installation ne télécharge pas les données de transport : importez-les séparément.
+            {t(
+              'Si l’option est absente, ouvrez le site dans un navigateur externe sous HTTPS. L’installation ne télécharge pas les données de transport : importez-les séparément.',
+            )}
           </p>
           <button className="primary" onClick={() => setGuide(false)}>
-            J’ai compris
+            {t('J’ai compris')}
           </button>
         </Dialog>
       )}

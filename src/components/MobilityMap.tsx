@@ -1,3 +1,5 @@
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useState } from 'react';
 import {
   MapContainer,
@@ -38,6 +40,8 @@ function Contents({
   showLines: boolean;
   showAreas: boolean;
 }) {
+  useLocale();
+
   const [stations, setStations] = useState<Station[]>([]),
     [lines, setLines] = useState<GeoRecord[]>([]),
     [areas, setAreas] = useState<GeoRecord[]>([]);
@@ -84,7 +88,7 @@ function Contents({
             <Popup>
               <strong>{s.name}</strong>
               <br />
-              <button onClick={() => onStation(s)}>Choisir comme origine</button>
+              <button onClick={() => onStation(s)}>{t('Choisir comme origine')}</button>
             </Popup>
           </CircleMarker>
         ))}
@@ -100,7 +104,7 @@ function Contents({
             },
           }}
         >
-          <Popup>Point sélectionné. Choisissez un arrêt pour le moteur GTFS.</Popup>
+          <Popup>{t('Point sélectionné. Choisissez un arrêt pour le moteur GTFS.')}</Popup>
         </Marker>
       )}
     </>
@@ -130,6 +134,8 @@ export function MobilityMap({
   threshold: number;
   onlineTiles: boolean;
 }) {
+  useLocale();
+
   const [stations, setStations] = useState(true),
     [lines, setLines] = useState(true),
     [areas, setAreas] = useState(true);
@@ -169,17 +175,17 @@ export function MobilityMap({
         ))}
       </MapContainer>
       <div className="map-label">
-        <span className="eyebrow">FRANCE</span>
-        <strong>Votre territoire, à votre rythme.</strong>
+        <span className="eyebrow">{t('FRANCE')}</span>
+        <strong>{t('Votre territoire, à votre rythme.')}</strong>
         {!onlineTiles && (
-          <small>Fond externe désactivé · couches importées disponibles hors ligne</small>
+          <small>{t('Fond externe désactivé · couches importées disponibles hors ligne')}</small>
         )}
       </div>
       <div className="layers">
         {[
-          ['Arrêts', stations, setStations],
-          ['Lignes', lines, setLines],
-          ['Limites', areas, setAreas],
+          [t('Arrêts'), stations, setStations],
+          [t('Lignes'), lines, setLines],
+          [t('Limites'), areas, setAreas],
         ].map(([name, value, set]) => (
           <label key={String(name)}>
             <input
@@ -192,11 +198,16 @@ export function MobilityMap({
         ))}
       </div>
       <div className="map-legend">
-        <HelpTip text="Déplacez ou zoomez la carte. Cliquez sur un point pour chercher un arrêt proche ; activez les couches importées avec les cases. Les disques sont symboliques, sans garantie d’accès piéton." />
-        <span className="dot" /> Arrêts importés <span className="legend-rule" /> Tracés importés{' '}
+        <HelpTip
+          text={t(
+            'Déplacez ou zoomez la carte. Cliquez sur un point pour chercher un arrêt proche ; activez les couches importées avec les cases. Les disques sont symboliques, sans garantie d’accès piéton.',
+          )}
+        />
+        <span className="dot" /> {t('Arrêts importés')} <span className="legend-rule" />{' '}
+        {t('Tracés importés')}{' '}
         {results.length > 0 && (
           <small>
-            Disques symboliques de 80 m · affichage limité à 2 000 symboles par origine.
+            {t('Disques symboliques de 80 m · affichage limité à 2 000 symboles par origine.')}
             <br />
             {results
               .map(

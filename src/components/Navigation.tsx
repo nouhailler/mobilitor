@@ -1,3 +1,5 @@
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Dialog } from './Dialog';
@@ -20,6 +22,7 @@ const groups = [
   {
     title: 'Application',
     items: [
+      ['/presentation', '↗', 'Présentation', 'Découvrir Mobilitor'],
       ['/parametres', '⚙', 'Paramètres', 'Thème, favoris et stockage'],
       ['/systeme', '↻', 'Système', 'Version, installation et mises à jour'],
       ['/a-propos', 'ⓘ', 'À propos & mentions légales', 'Confidentialité et responsabilité'],
@@ -27,28 +30,30 @@ const groups = [
   },
 ];
 export function Navigation() {
+  useLocale();
+
   const [open, setOpen] = useState(false);
   return (
     <>
       <button
         className="hamburger"
-        aria-label="Ouvrir le menu"
+        aria-label={t('Ouvrir le menu')}
         aria-expanded={open}
         aria-haspopup="dialog"
-        title="Afficher les fonctionnalités par catégorie"
+        title={t('Afficher les fonctionnalités par catégorie')}
         onClick={() => setOpen(true)}
       >
-        ☰ <span>Menu</span>
+        ☰ <span>{t('Menu')}</span>
       </button>
       {open && (
-        <Dialog title="Toutes les fonctionnalités" onClose={() => setOpen(false)}>
-          <nav className="category-nav" aria-label="Navigation principale">
+        <Dialog title={t('Toutes les fonctionnalités')} onClose={() => setOpen(false)}>
+          <nav className="category-nav" aria-label={t('Navigation principale')}>
             {groups.map((group) => (
               <section key={group.title}>
-                <h3>{group.title}</h3>
+                <h3>{t(group.title)}</h3>
                 {group.items.map(([path, icon, name, description]) => (
                   <NavLink
-                    aria-label={name}
+                    aria-label={t(name)}
                     key={path}
                     to={path}
                     end={path === '/'}
@@ -56,8 +61,8 @@ export function Navigation() {
                   >
                     <span aria-hidden>{icon}</span>
                     <span>
-                      {name}
-                      <small>{description}</small>
+                      {t(name)}
+                      <small>{t(description)}</small>
                     </span>
                   </NavLink>
                 ))}

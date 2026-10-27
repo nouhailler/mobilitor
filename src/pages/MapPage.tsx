@@ -1,3 +1,5 @@
+import { t, formatLocale } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useRef, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -22,6 +24,8 @@ function clock(n: number) {
   return `${String(Math.floor(n / 3600)).padStart(2, '0')}:${String(Math.floor((n % 3600) / 60)).padStart(2, '0')}`;
 }
 export function MapPage({ comparison = false }: { comparison?: boolean }) {
+  useLocale();
+
   const [params] = useSearchParams();
   const sources = useLiveQuery(
     () => db.dataSources.filter((s) => s.kind === 'gtfs').toArray(),
@@ -159,12 +163,16 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
   return (
     <div className="explorer">
       <aside className="explore-panel">
-        <span className="eyebrow">EXPLORER LES POSSIBLES</span>
-        <h1>{comparison ? 'Comparez vos points de départ.' : 'Jusqu’où pouvez-vous aller ?'}</h1>
+        <span className="eyebrow">{t('EXPLORER LES POSSIBLES')}</span>
+        <h1>
+          {comparison ? t('Comparez vos points de départ.') : t('Jusqu’où pouvez-vous aller ?')}
+        </h1>
         <p className="muted">
           {comparison
-            ? 'Deux ou trois origines. Les mêmes horaires. Une lecture commune.'
-            : 'Explorez les transports autour de vous, avec des calculs qui restent sur votre appareil.'}
+            ? t('Deux ou trois origines. Les mêmes horaires. Une lecture commune.')
+            : t(
+                'Explorez les transports autour de vous, avec des calculs qui restent sur votre appareil.',
+              )}
         </p>
         {!comparison && (
           <div className="segmented">
@@ -175,7 +183,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                 setResults([]);
               }}
             >
-              Isochrones
+              {t('Isochrones')}
             </button>
             <button
               className={route ? 'active' : ''}
@@ -184,12 +192,12 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                 setResults([]);
               }}
             >
-              Itinéraire
+              {t('Itinéraire')}
             </button>
           </div>
         )}
         <label>
-          Jeu d’horaires
+          {t('Jeu d’horaires')}
           <select
             value={selectedSource}
             onChange={(e) => {
@@ -199,7 +207,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
               setResults([]);
             }}
           >
-            <option value="">Aucun flux importé</option>
+            <option value="">{t('Aucun flux importé')}</option>
             {sources.map((s) => (
               <option key={s.id} value={s.id}>
                 {s.name}
@@ -208,7 +216,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
           </select>
         </label>
         <StationSearch
-          label="Point de départ"
+          label={t('Point de départ')}
           value={origins[0]}
           sourceId={selectedSource || undefined}
           onChange={(s) => select(s)}
@@ -217,7 +225,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
           [1, 2].map((i) => (
             <StationSearch
               key={i}
-              label={`Origine ${i + 1}${i === 2 ? ' (facultative)' : ''}`}
+              label={t(i === 2 ? 'Origine 3 (facultative)' : 'Origine 2')}
               value={origins[i]}
               sourceId={selectedSource || undefined}
               onChange={(s) => select(s, i)}
@@ -225,14 +233,14 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
           ))}
         {coordinate && !origins[0] && (
           <div className="notice">
-            Point sélectionné : {coordinate.map((n) => n.toFixed(4)).join(', ')}. Choisissez un
-            arrêt proche ; aucun trajet piéton implicite.
+            {t('Point sélectionné :')} {coordinate.map((n) => n.toFixed(4)).join(', ')}
+            {t('. Choisissez un arrêt proche ; aucun trajet piéton implicite.')}
             {nearby.map((s) => (
               <button className="text-button" key={s.id} onClick={() => select(s)}>
                 {s.name}
               </button>
             ))}
-            {!nearby.length && <p>Aucun arrêt du flux à moins de 1 km.</p>}
+            {!nearby.length && <p>{t('Aucun arrêt du flux à moins de 1 km.')}</p>}
           </div>
         )}
         {!comparison && (
@@ -251,16 +259,16 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                 );
               }}
             >
-              ◎ Ma position
+              {t('◎ Ma position')}
             </button>
             <button className="text-button" disabled={!origins[0]} onClick={() => void save()}>
-              ☆ Enregistrer
+              {t('☆ Enregistrer')}
             </button>
           </div>
         )}
         {route && (
           <StationSearch
-            label="Destination"
+            label={t('Destination')}
             value={destination}
             sourceId={selectedSource || undefined}
             onChange={setDestination}
@@ -268,7 +276,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
         )}
         <div className="field-row">
           <label>
-            Date de départ
+            {t('Date de départ')}
             <input
               type="date"
               value={date}
@@ -279,7 +287,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
             />
           </label>
           <label>
-            Heure · Paris
+            {t('Heure · Paris')}
             <input
               type="time"
               value={time}
@@ -291,15 +299,19 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
           </label>
         </div>
         <label>
-          Moteur
+          {t('Moteur')}
           <select value="gtfs" onChange={() => {}}>
-            <option value="gtfs">Transports · horaires GTFS</option>
-            <option disabled>Marche · réseau piéton absent</option>
+            <option value="gtfs">{t('Transports · horaires GTFS')}</option>
+            <option disabled>{t('Marche · réseau piéton absent')}</option>
           </select>
         </label>
         <label>
-          Temps disponible{' '}
-          <HelpTip text="Sélectionnez le temps maximal depuis le départ, attente comprise. Les seuils filtrent le même calcul de 60 minutes. Les exports suivent le seuil sélectionné." />
+          {t('Temps disponible')}{' '}
+          <HelpTip
+            text={t(
+              'Sélectionnez le temps maximal depuis le départ, attente comprise. Les seuils filtrent le même calcul de 60 minutes. Les exports suivent le seuil sélectionné.',
+            )}
+          />
         </label>
         <div className="thresholds">
           {[15, 30, 45, 60].map((n) => (
@@ -309,62 +321,66 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
               onClick={() => setThreshold(n)}
             >
               {n}
-              <small>min</small>
+              <small>{t('min')}</small>
             </button>
           ))}
         </div>
         <button className="primary" disabled={busy || !sources.length} onClick={() => void run()}>
           {busy
-            ? 'Calcul en cours…'
+            ? t('Calcul en cours…')
             : comparison
-              ? 'Comparer les origines →'
+              ? t('Comparer les origines →')
               : route
-                ? 'Trouver mon itinéraire →'
-                : 'Calculer mon isochrone →'}
+                ? t('Trouver mon itinéraire →')
+                : t('Calculer mon isochrone →')}
         </button>
-        {busy && <button onClick={() => controller.current?.abort()}>Annuler le calcul</button>}
+        {busy && (
+          <button onClick={() => controller.current?.abort()}>{t('Annuler le calcul')}</button>
+        )}
         {error && (
           <p role="alert" className="error">
-            {error}
+            {t(error)}
           </p>
         )}
         {progress && (
           <p role="status" className="muted">
-            {progress}
+            {t(progress)}
           </p>
         )}
         {!sources.length && (
           <div className="empty-card">
             <span>↧</span>
-            <strong>Votre carte commence ici.</strong>
+            <strong>{t('Votre carte commence ici.')}</strong>
             <p>
-              Importez vos données pour rechercher des arrêts et calculer vos déplacements hors
-              ligne.
+              {t(
+                'Importez vos données pour rechercher des arrêts et calculer vos déplacements hors ligne.',
+              )}
             </p>
-            <Link to="/donnees">Installer mes données →</Link>
+            <Link to="/donnees">{t('Installer mes données →')}</Link>
           </div>
         )}
         {!!results.length && (
           <section className="results">
-            <span className="eyebrow">RÉSULTATS LOCAUX</span>
+            <span className="eyebrow">{t('RÉSULTATS LOCAUX')}</span>
             {results.map((r, i) => (
               <div key={i}>
-                <h2>{comparison ? origins[i]?.name : `${total} arrêts atteignables`}</h2>
+                <h2>{comparison ? origins[i]?.name : t(`${total} arrêts atteignables`)}</h2>
                 {comparison && (
                   <p>
-                    {r.reachable.filter((s) => s.seconds <= threshold * 60).length} arrêts en{' '}
-                    {threshold} min
+                    {r.reachable.filter((s) => s.seconds <= threshold * 60).length} {t('arrêts en')}{' '}
+                    {threshold} {t('min')}
                   </p>
                 )}
                 {!!r.servingLines?.length && (
                   <p className="muted">
-                    {r.servingLines.length} ligne(s) desservant les arrêts atteignables sur 60 min :{' '}
+                    {r.servingLines.length}{' '}
+                    {t('ligne(s) desservant les arrêts atteignables sur 60 min :')}{' '}
                     {r.servingLines.slice(0, 20).join(', ')}
                   </p>
                 )}
                 {route &&
                   (r.arrival === undefined ? (
-                    <p>Aucun trajet dans les 60 prochaines minutes.</p>
+                    <p>{t('Aucun trajet dans les 60 prochaines minutes.')}</p>
                   ) : (
                     <>
                       <p>
@@ -375,9 +391,9 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                               Number(time.slice(3)) * 60) /
                               60,
                           )}{' '}
-                          min
+                          {t('min')}
                         </strong>{' '}
-                        · arrivée {clock(r.arrival)}
+                        {t('· arrivée')} {clock(r.arrival)}
                       </p>
                       {r.legs.map((leg, j) => (
                         <div className="leg" key={j}>
@@ -386,7 +402,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                               ? r.legs[j - 1].arrival
                               : Number(time.slice(0, 2)) * 3600 + Number(time.slice(3)) * 60) && (
                             <small>
-                              Attente :{' '}
+                              {t('Attente :')}{' '}
                               {Math.ceil(
                                 (leg.departure -
                                   (j
@@ -395,7 +411,7 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                                       Number(time.slice(3)) * 60)) /
                                   60,
                               )}{' '}
-                              min
+                              {t('min')}
                             </small>
                           )}
                           <small>
@@ -407,8 +423,8 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                           </strong>
                           <small>
                             {leg.kind === 'transfer'
-                              ? 'Correspondance'
-                              : `Ligne ${leg.line} · course ${leg.trip}`}
+                              ? t('Correspondance')
+                              : t(`Ligne ${leg.line} · course ${leg.trip}`)}
                           </small>
                         </div>
                       ))}
@@ -417,13 +433,14 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                 <small>
                   {r.request.date} · {r.request.time} · {r.sourceName}
                   <br />
-                  Version importée le {new Date(r.importedAt).toLocaleString('fr-FR')}
+                  {t('Version importée le')} {new Date(r.importedAt).toLocaleString(formatLocale())}
                 </small>
               </div>
             ))}
             <p className="muted">
-              Arrêts uniquement. Les disques affichés ne prouvent aucune accessibilité entre les
-              arrêts.
+              {t(
+                'Arrêts uniquement. Les disques affichés ne prouvent aucune accessibilité entre les arrêts.',
+              )}
             </p>
             <button
               onClick={() =>
@@ -436,15 +453,15 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                 )
               }
             >
-              Exporter GeoJSON
+              {t('Exporter GeoJSON')}
             </button>
-            <button onClick={() => void image()}>Exporter la carte PNG</button>
+            <button onClick={() => void image()}>{t('Exporter la carte PNG')}</button>
             <button
               onClick={() =>
                 void db.savedScenarios
                   .put({
                     id: crypto.randomUUID(),
-                    name: `${comparison ? 'Comparaison' : 'Départ'} ${date} ${time}`,
+                    name: `${comparison ? t('Comparaison') : t('Départ')} ${date} ${time}`,
                     origins: origins.filter((s): s is Station => !!s).map((s) => s.id),
                     date,
                     time,
@@ -452,19 +469,19 @@ export function MapPage({ comparison = false }: { comparison?: boolean }) {
                   .then(() => setProgress('Scénario enregistré.'))
               }
             >
-              Enregistrer le scénario
+              {t('Enregistrer le scénario')}
             </button>
             {results[0].warnings.map((w) => (
               <p className="muted" key={w}>
-                {w}
+                {t(w)}
               </p>
             ))}
           </section>
         )}
         <div className="privacy-note">
-          ⌁ Sans compte. Sans serveur de calcul.
+          {t('⌁ Sans compte. Sans serveur de calcul.')}
           <br />
-          Vos données restent sur cet appareil.
+          {t('Vos données restent sur cet appareil.')}
         </div>
       </aside>
       <MobilityMap

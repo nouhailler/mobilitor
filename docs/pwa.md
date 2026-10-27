@@ -1,4 +1,4 @@
-# PWA et mises à jour — version 0.2.0
+# PWA et mises à jour — version 0.4.0
 
 vite-plugin-pwa / Workbox construit le précache du shell (scripts, styles, icônes et manifeste, Workers compris). Les GTFS et données utilisateur restent dans IndexedDB. Les tuiles OSM ne sont pas précachées.
 
@@ -25,3 +25,11 @@ Une PWA fermée ou masquée peut être suspendue par le navigateur : aucun contr
 Les tests navigateur servent le build avec deux contenus successifs de `sw.js` pour vérifier la détection, l’activation automatique/forcée, le report inter-onglets et la conservation d’un favori synthétique. Ce serveur est une fixture de test, pas un backend de l’application. Gestes d’installation Android/iOS et suspension du système restent à tester sur appareils.
 
 Références consultées le 16 octobre 2026 : [MDN — BeforeInstallPromptEvent](https://developer.mozilla.org/en-US/docs/Web/API/BeforeInstallPromptEvent), [MDN — ServiceWorkerRegistration.update](https://developer.mozilla.org/en-US/docs/Web/API/ServiceWorkerRegistration/update). Les API et leur disponibilité restent sous le contrôle des navigateurs.
+
+## Langue de l’installation et hors ligne — 0.3
+
+Le sélecteur de langue met à jour `html.lang` et le lien vers `manifest.webmanifest` ou `manifest.en.webmanifest`. Les deux manifestes utilisent l’identité `/` et la même portée : pas de deuxième base ni de nouvelle application indépendante. Le démarrage anglais utilise `/?lang=en`. Le catalogue est compilé dans le shell ; aucune traduction réseau n’est requise après précache. Les dialogues natifs dépendent toujours du navigateur. La langue persistée ne modifie ni les flux GTFS ni leur fuseau horaire.
+
+## Présentation bilingue — 0.4
+
+La landing page est servie par le même build statique aux routes hash `/presentation`, `/presentation/fr` et `/presentation/en`. Elle n’ajoute ni backend ni compte. Les captures JPEG locales sont incluses dans le précache, qui atteint environ 1,7 Mio avec le shell et les deux images. L’installation depuis la présentation ouvre toujours l’application selon le manifeste choisi, pas une seconde PWA.

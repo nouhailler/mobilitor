@@ -1,3 +1,5 @@
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useRef, type ReactNode } from 'react';
 export function Dialog({
   title,
@@ -8,6 +10,8 @@ export function Dialog({
   onClose: () => void;
   children: ReactNode;
 }) {
+  useLocale();
+
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const node = ref.current;
@@ -33,7 +37,7 @@ export function Dialog({
     >
       <div className="dialog-heading">
         <h2>{title}</h2>
-        <button autoFocus aria-label="Fermer la fenêtre" onClick={onClose}>
+        <button autoFocus aria-label={t('Fermer la fenêtre')} onClick={onClose}>
           ✕
         </button>
       </div>

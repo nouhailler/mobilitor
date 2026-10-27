@@ -1,5 +1,9 @@
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useId, useState, useRef, useLayoutEffect, type CSSProperties } from 'react';
 export function HelpTip({ text }: { text: string }) {
+  const language = useLocale();
+
   const id = useId();
   const trigger = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState<CSSProperties>({});
@@ -9,29 +13,33 @@ export function HelpTip({ text }: { text: string }) {
   const shown = open || (hover && !dismissed);
   useLayoutEffect(() => {
     if (!shown) return;
-    const rect = trigger.current?.getBoundingClientRect();
-    if (!rect) return;
-    const width = Math.min(265, window.innerWidth * 0.7);
-    setPosition({
-      position: 'fixed',
-      left: Math.max(12, Math.min(rect.left, window.innerWidth - width - 12)),
-      right: 'auto',
-      ...(rect.top > 220
-        ? { bottom: window.innerHeight - rect.top + 8, top: 'auto' }
-        : { top: rect.bottom + 8, bottom: 'auto' }),
-    });
-    const close = () => {
-      setOpen(false);
-      setHover(false);
-      setDismissed(true);
+    const place = () => {
+      const rect = trigger.current?.getBoundingClientRect();
+      if (!rect) return;
+      if (rect.bottom < 0 || rect.top > window.innerHeight) {
+        setOpen(false);
+        setHover(false);
+        setDismissed(true);
+        return;
+      }
+      const width = Math.min(265, window.innerWidth * 0.7);
+      setPosition({
+        position: 'fixed',
+        left: Math.max(12, Math.min(rect.left, window.innerWidth - width - 12)),
+        right: 'auto',
+        ...(rect.top > 220
+          ? { bottom: window.innerHeight - rect.top + 8, top: 'auto' }
+          : { top: rect.bottom + 8, bottom: 'auto' }),
+      });
     };
-    window.addEventListener('scroll', close, true);
-    window.addEventListener('resize', close);
+    place();
+    window.addEventListener('scroll', place, true);
+    window.addEventListener('resize', place);
     return () => {
-      window.removeEventListener('scroll', close, true);
-      window.removeEventListener('resize', close);
+      window.removeEventListener('scroll', place, true);
+      window.removeEventListener('resize', place);
     };
-  }, [shown]);
+  }, [shown, language]);
   return (
     <span
       className="help-tip"
@@ -45,7 +53,7 @@ export function HelpTip({ text }: { text: string }) {
         ref={trigger}
         type="button"
         className="tip-trigger"
-        aria-label="Afficher une explication"
+        aria-label={t('Afficher une explication')}
         aria-describedby={shown ? id : undefined}
         aria-expanded={shown}
         onClick={(e) => {
@@ -72,7 +80,7 @@ export function HelpTip({ text }: { text: string }) {
         role="tooltip"
         className={shown ? 'tip-content is-open' : 'tip-content'}
       >
-        {text}
+        {t(text)}
       </span>
     </span>
   );

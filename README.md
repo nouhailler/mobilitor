@@ -11,9 +11,32 @@
 ![React 19 et TypeScript 5.9](docs/assets/badge-stack.svg)
 [![Licence MIT](docs/assets/badge-license.svg)](LICENSE)
 
-PWA française sans compte ni serveur de calcul. Les données importées, favoris et scénarios restent dans **IndexedDB** ; les calculs s’exécutent dans des **Web Workers**. Aucun backend, PostgreSQL ou PostGIS requis.
+PWA française et anglaise sans compte ni serveur de calcul. Les données importées, favoris et scénarios restent dans **IndexedDB** ; les calculs s’exécutent dans des **Web Workers**. Aucun backend, PostgreSQL ou PostGIS requis.
 
 [📸 Aperçu](#-aperçu) · [🚀 Démarrer](#-démarrer) · [📥 Importer](#-importer-et-calculer) · [📴 Hors ligne](#-utiliser-la-pwa-hors-ligne) · [📚 Documentation](#-documentation)
+
+## 🌿 Présentation de l’application
+
+Une landing page indépendante de l’interface de calcul présente Mobilitor en français et en anglais : fonctionnalités, captures réelles, démarrage en trois étapes, confidentialité, FAQ, installation et accès direct à l’application.
+
+| Version            | Route                |
+| ------------------ | -------------------- |
+| Français           | `/#/presentation/fr` |
+| English            | `/#/presentation/en` |
+| Langue enregistrée | `/#/presentation`    |
+
+L’application conserve sa route `/#/` et ses liens existants. La présentation est accessible depuis **Menu → Présentation** et le pied de page, sans onboarding imposé à l’arrivée. Le choix FR/EN est partagé avec l’application. Pour l’aperçu local après `npm run build` et `npm run preview` : [Français](http://127.0.0.1:4173/#/presentation/fr) · [English](http://127.0.0.1:4173/#/presentation/en).
+
+<details>
+<summary>Voir les captures de la présentation française et anglaise</summary>
+
+![Présentation française de Mobilitor](docs/assets/mobilitor-landing-fr.png)
+
+![Mobilitor English overview](docs/assets/mobilitor-landing-en.png)
+
+</details>
+
+Les captures JPEG allégées sont servies localement et précachées. Aucun témoignage, chiffre d’usage ou résultat de calcul fictif n’est présenté. Les limites des données et du mode hors ligne sont explicites.
 
 ## 📸 Aperçu
 
@@ -50,6 +73,18 @@ _Capture réelle de la version 0.2.0, réalisée le 16 octobre 2026. Le fond Ope
 ![Onboarding et informations légales](docs/assets/mobilitor-onboarding.png)
 
 </details>
+
+## 🌐 Français / English
+
+La version **0.3.0** ajoute une interface anglaise complète. Le français reste la langue par défaut. Choisissez **English** dans le sélecteur **Langue / Language** de l’en-tête, dès l’onboarding, ou dans **Menu → Paramètres → Langue de l’interface**.
+
+Le choix est conservé sur l’appareil, y compris hors ligne. Le changement ne recharge pas la page et conserve les champs et résultats en cours. Les noms de stations/lignes, identifiants GTFS, fichiers et données enregistrées ne sont pas réécrits. Les dates de l’interface suivent la langue ; les départs restent dans le fuseau Europe/Paris.
+
+[**Read the English getting-started guide →**](docs/english.md)
+
+![Mobilitor avec l’interface anglaise](docs/assets/mobilitor-english.png)
+
+Un lien `/?lang=en` ouvre explicitement l’interface anglaise ; placer le paramètre avant le `#` des routes. Le catalogue et le manifeste anglais sont inclus dans le cache PWA, sans service de traduction distant.
 
 ## ☰ Menu, thèmes et prise en main
 
@@ -128,7 +163,7 @@ Le fond en ligne peut être désactivé dans **Paramètres**. Il transmet les de
 
 ## ↻ Paramètres système et mises à jour
 
-**Menu → Système** affiche la version **0.2.0**, sa date de sortie (**16 octobre 2026**), l’identifiant du build, la dernière vérification réussie et la dernière tentative sur cet appareil. La date de vérification est enregistrée uniquement après un contrôle réussi ; un échec réseau ne la remplace pas. Elle concerne l’application, pas les données de transport.
+**Menu → Système** affiche la version **0.4.0**, sa date de sortie (**27 octobre 2026**), l’identifiant du build, la dernière vérification réussie et la dernière tentative sur cet appareil. La date de vérification est enregistrée uniquement après un contrôle réussi ; un échec réseau ne la remplace pas. Elle concerne l’application, pas les données de transport.
 
 | Action                    | Comportement                                                                                                                   |
 | ------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
@@ -172,6 +207,10 @@ Prévoir environ **12 fois la taille compressée du fichier** en espace libre, s
 
 ## 🧪 Vérifications
 
+Pour la version 0.4.0 : **44 tests et 15 parcours Chromium passent**, avec les présentations française/anglaise, la FAQ, le mobile et la conservation du thème de l’application.
+
+Les vérifications de la version 0.3.0 (27 octobre) ajoutent la langue persistée, les écrans anglais, les erreurs, un trajet GTFS et le recalcul hors ligne, sans altération des noms importés. **44 tests unitaires/intégration et 12 parcours Chromium passent pour 0.3.0**, avec lint, TypeScript et build. Les validations historiques restent datées dans le rapport.
+
 Le [rapport de validation](docs/validation.md) distingue la validation initiale du 9 octobre et les contrôles de la version 0.2 du 16 octobre : moteur, imports, mises à jour, navigation, thème, onboarding et installation. **37 tests unitaires/intégration et 9 parcours Chromium passent pour la version 0.2.0**, ainsi que lint, TypeScript et build. Il distingue ces vérifications des essais encore nécessaires sur appareils Android/iOS. Les badges de ce README décrivent le projet ; ils ne constituent pas un statut de CI en temps réel.
 
 ## 🧱 Structure du dépôt
@@ -181,6 +220,7 @@ src/
 ├── components/   # Carte, navigation, onboarding, installation et aides
 ├── db/           # IndexedDB, schéma Dexie et migrations
 ├── imports/      # CSV, GeoJSON, GTFS et validation
+├── i18n/         # Catalogue anglais, langue persistée et abonnements React
 ├── pages/        # Explorer, comparer, données, sources, paramètres
 ├── routing/      # Connection Scan Algorithm et géométrie
 ├── services/     # Services métier, mises à jour et verrous d’activité
@@ -198,6 +238,7 @@ tests/            # Tests unitaires, intégration et navigateur
 
 | Sujet                                       | Ressource                                                                                                |
 | ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| 🌐 English                                  | [Getting started in English](docs/english.md)                                                            |
 | 🧭 Contexte du projet et reprise du travail | [CONTEXT.md](CONTEXT.md)                                                                                 |
 | 🧱 Architecture et stockage                 | [Architecture](docs/architecture.md) · [Stockage local](docs/local-storage.md)                           |
 | 📥 Données et provenance                    | [Sources](docs/data-sources.md) · [Import](docs/data-import.md) · [Préparation](scripts/README.md)       |

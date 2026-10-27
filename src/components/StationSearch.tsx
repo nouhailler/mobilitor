@@ -1,3 +1,5 @@
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useState } from 'react';
 import { listStations } from '../services/stationService';
 import type { Station } from '../db/schema';
@@ -12,6 +14,8 @@ export function StationSearch({
   onChange: (s: Station) => void;
   sourceId?: string;
 }) {
+  useLocale();
+
   const [query, setQuery] = useState(''),
     [open, setOpen] = useState(false),
     [stations, setStations] = useState<Station[]>([]);
@@ -39,7 +43,7 @@ export function StationSearch({
         <input
           aria-label={label}
           value={open ? query : value?.name || ''}
-          placeholder="Rechercher dans les données locales"
+          placeholder={t('Rechercher dans les données locales')}
           onFocus={() => setOpen(true)}
           onChange={(e) => {
             setQuery(e.target.value);
@@ -65,7 +69,7 @@ export function StationSearch({
               </button>
             ))
           ) : (
-            <p>Aucun arrêt local correspondant.</p>
+            <p>{t('Aucun arrêt local correspondant.')}</p>
           )}
         </div>
       )}

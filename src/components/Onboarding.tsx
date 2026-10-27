@@ -1,9 +1,14 @@
+import { LanguageSelector } from './LanguageSelector';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { db } from '../db/database';
 import { Dialog } from './Dialog';
 import { LegalNotice, LEGAL_VERSION } from './LegalNotice';
 export function Welcome() {
+  useLocale();
+
   const [open, setOpen] = useState(false),
     [step, setStep] = useState(0),
     [read, setRead] = useState(false),
@@ -39,51 +44,58 @@ export function Welcome() {
   if (!open)
     return error ? (
       <p className="notice" role="status">
-        {error}
+        {t(error)}
       </p>
     ) : null;
   return (
     <Dialog
       title={
         step === 0
-          ? 'Bienvenue dans Mobilitor'
+          ? t('Bienvenue dans Mobilitor')
           : step === 1
-            ? 'Vos données, votre appareil'
-            : 'Informations légales et responsabilité'
+            ? t('Vos données, votre appareil')
+            : t('Informations légales et responsabilité')
       }
       onClose={() => {
         if (step < 2) setStep(2);
         else setOpen(false);
       }}
     >
-      <p className="eyebrow">PRISE EN MAIN · {step + 1} / 3</p>
+      <LanguageSelector />
+      <p className="eyebrow">
+        {t('PRISE EN MAIN ·')} {step + 1} / 3
+      </p>
       {step === 0 ? (
         <>
-          <h3>Une carte pour explorer vos déplacements</h3>
+          <h3>{t('Une carte pour explorer vos déplacements')}</h3>
           <p>
-            Découvrez la France sur OpenStreetMap, puis importez vos horaires pour calculer vos
-            trajets et comparer des points de départ. Le menu ☰ regroupe toutes les fonctionnalités
-            par catégorie.
+            {t(
+              'Découvrez la France sur OpenStreetMap, puis importez vos horaires pour calculer vos trajets et comparer des points de départ. Le menu ☰ regroupe toutes les fonctionnalités par catégorie.',
+            )}
           </p>
           <p>
-            Le bouton « Installer l’application » vous accompagne pour ajouter Mobilitor à votre
-            écran d’accueil ou à votre bureau.
+            {t(
+              'Le bouton « Installer l’application » vous accompagne pour ajouter Mobilitor à votre écran d’accueil ou à votre bureau.',
+            )}
           </p>
         </>
       ) : step === 1 ? (
         <>
-          <h3>Aucun compte, aucun serveur de calcul</h3>
+          <h3>{t('Aucun compte, aucun serveur de calcul')}</h3>
           <p>
-            Importez un fichier GTFS dans « Mes données ». Les calculs, favoris et scénarios restent
-            sur cet appareil. Les aides de chaque écran et les boutons ⓘ expliquent les champs.
+            {t(
+              'Importez un fichier GTFS dans « Mes données ». Les calculs, favoris et scénarios restent sur cet appareil. Les aides de chaque écran et les boutons ⓘ expliquent les champs.',
+            )}
           </p>
           <p>
-            Le fond cartographique nécessite Internet. Les fonctions locales restent utilisables
-            hors ligne après mise en cache de l’application et import des données.
+            {t(
+              'Le fond cartographique nécessite Internet. Les fonctions locales restent utilisables hors ligne après mise en cache de l’application et import des données.',
+            )}
           </p>
           <p>
-            Les mises à jour de l’application se téléchargent automatiquement lorsqu’elle est
-            ouverte et connectée. Les données de transport ne sont jamais actualisées implicitement.
+            {t(
+              'Les mises à jour de l’application se téléchargent automatiquement lorsqu’elle est ouverte et connectée. Les données de transport ne sont jamais actualisées implicitement.',
+            )}
           </p>
         </>
       ) : (
@@ -91,19 +103,19 @@ export function Welcome() {
           <LegalNotice />
           <label className="toggle">
             <input type="checkbox" checked={read} onChange={(e) => setRead(e.target.checked)} />
-            J’ai lu les informations sur les données et les limites de responsabilité.
+            {t('J’ai lu les informations sur les données et les limites de responsabilité.')}
           </label>
         </>
       )}
       <div className="dialog-actions">
-        {step > 0 && <button onClick={() => setStep(step - 1)}>Précédent</button>}
+        {step > 0 && <button onClick={() => setStep(step - 1)}>{t('Précédent')}</button>}
         {step < 2 ? (
           <button className="primary" onClick={() => setStep(step + 1)}>
-            Continuer
+            {t('Continuer')}
           </button>
         ) : (
           <button className="primary" disabled={!read} onClick={() => void finish()}>
-            Commencer à explorer
+            {t('Commencer à explorer')}
           </button>
         )}
       </div>
@@ -169,6 +181,8 @@ export const SCREEN_HELP: Record<string, { title: string; steps: string[] }> = {
   },
 };
 export function ContextualHelp() {
+  useLocale();
+
   const { pathname } = useLocation();
   const [open, setOpen] = useState(false);
   const [hidden, setHidden] = useState(true);
@@ -189,7 +203,7 @@ export function ContextualHelp() {
   }, [pathname]);
   if (!help) return null;
   return (
-    <aside className="contextual-help" aria-label="Aide de cet écran">
+    <aside className="contextual-help" aria-label={t('Aide de cet écran')}>
       <button
         className="help-toggle"
         aria-expanded={open || !hidden}
@@ -200,14 +214,14 @@ export function ContextualHelp() {
           } else setOpen(!open);
         }}
       >
-        ⓘ Guide de cet écran
+        {t('ⓘ Guide de cet écran')}
       </button>
       {(open || !hidden) && (
         <div className="help-body">
-          <strong>{help.title}</strong>
+          <strong>{t(help.title)}</strong>
           <ol>
             {help.steps.map((text) => (
-              <li key={text}>{text}</li>
+              <li key={text}>{t(text)}</li>
             ))}
           </ol>
           <button
@@ -217,7 +231,7 @@ export function ContextualHelp() {
               void db.preferences.put({ key: `guide:${pathname}`, value: true });
             }}
           >
-            J’ai compris, masquer ce guide
+            {t('J’ai compris, masquer ce guide')}
           </button>
         </div>
       )}

@@ -50,7 +50,7 @@ test('onboarding légal, menu catégorisé, guides et thème sombre persistant',
   await expect(field.getByRole('tooltip')).toBeVisible();
   await navigate(page, 'Système');
   await expect(page.getByRole('heading', { name: 'Paramètres système' })).toBeVisible();
-  await expect(page.getByText('16 octobre 2026', { exact: true })).toBeVisible();
+  await expect(page.getByText('27 octobre 2026', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Vérifier les mises à jour', exact: true }).click();
   await expect(page.getByRole('status')).toContainText('Vérification terminée');
   await page.getByRole('button', { name: 'Forcer la mise à jour', exact: true }).click();

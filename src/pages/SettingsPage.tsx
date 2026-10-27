@@ -1,3 +1,6 @@
+import { LanguageSelector } from '../components/LanguageSelector';
+import { t } from '../i18n';
+import { useLocale } from '../i18n/useLocale';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -6,6 +9,8 @@ import { useAppTheme } from '../components/RuntimeContext';
 import type { Theme } from '../hooks/useTheme';
 import { requestPersistence } from '../services/storageService';
 export function SettingsPage() {
+  useLocale();
+
   const { theme, setTheme } = useAppTheme();
   const places = useLiveQuery(() => db.savedPlaces.toArray(), [], []),
     scenarios = useLiveQuery(() => db.savedScenarios.toArray(), [], []);
@@ -20,7 +25,9 @@ export function SettingsPage() {
   }, []);
   async function erase() {
     if (
-      !window.confirm('Effacer tous les jeux, lieux, scénarios et préférences sur cet appareil ?')
+      !window.confirm(
+        t('Effacer tous les jeux, lieux, scénarios et préférences sur cet appareil ?'),
+      )
     )
       return;
     await clearAll();
@@ -32,26 +39,31 @@ export function SettingsPage() {
   }
   return (
     <main className="content-page narrow">
-      <span className="eyebrow">SUR CET APPAREIL</span>
-      <h1>Vous gardez le contrôle.</h1>
+      <span className="eyebrow">{t('SUR CET APPAREIL')}</span>
+      <h1>{t('Vous gardez le contrôle.')}</h1>
       <section className="card">
-        <h2>Apparence</h2>
+        <h2>{t('Apparence')}</h2>
+        <LanguageSelector />
+        <p>
+          {t('Choisissez le français ou l’anglais. Votre choix est conservé sur cet appareil.')}
+        </p>
         <label>
-          Thème de l’interface
+          {t('Thème de l’interface')}
           <select value={theme} onChange={(e) => setTheme(e.target.value as Theme)}>
-            <option value="system">Automatique · suivre le système</option>
-            <option value="light">Clair</option>
-            <option value="dark">Sombre</option>
+            <option value="system">{t('Automatique · suivre le système')}</option>
+            <option value="light">{t('Clair')}</option>
+            <option value="dark">{t('Sombre')}</option>
           </select>
         </label>
         <p>
-          Ce choix est enregistré sur cet appareil. Le fond OpenStreetMap reste dans son style
-          d’origine.
+          {t(
+            'Ce choix est enregistré sur cet appareil. Le fond OpenStreetMap reste dans son style d’origine.',
+          )}
         </p>
-        <Link to="/systeme">Paramètres système, installation et mises à jour →</Link>
+        <Link to="/systeme">{t('Paramètres système, installation et mises à jour →')}</Link>
       </section>
       <section className="card">
-        <h2>Fond cartographique</h2>
+        <h2>{t('Fond cartographique')}</h2>
         <label className="toggle">
           <input
             type="checkbox"
@@ -61,17 +73,18 @@ export function SettingsPage() {
               void db.preferences.put({ key: 'onlineTiles', value: e.target.checked });
             }}
           />
-          Activer le fond OpenStreetMap en ligne
+          {t('Activer le fond OpenStreetMap en ligne')}
         </label>
         <p>
-          L’activation transmet au fournisseur les demandes de tuiles et l’adresse IP. Aucun favori
-          ni horaire de recherche n’est envoyé. Ce fond n’est pas disponible hors ligne.
+          {t(
+            'L’activation transmet au fournisseur les demandes de tuiles et l’adresse IP. Aucun favori ni horaire de recherche n’est envoyé. Ce fond n’est pas disponible hors ligne.',
+          )}
         </p>
       </section>
       <section className="card">
-        <h2>Seuil par défaut</h2>
+        <h2>{t('Seuil par défaut')}</h2>
         <label>
-          Temps disponible
+          {t('Temps disponible')}
           <select
             value={threshold}
             onChange={(e) => {
@@ -81,17 +94,18 @@ export function SettingsPage() {
           >
             {[15, 30, 45, 60].map((n) => (
               <option key={n} value={n}>
-                {n} minutes
+                {n} {t('minutes')}
               </option>
             ))}
           </select>
         </label>
       </section>
       <section className="card">
-        <h2>Préserver le stockage</h2>
+        <h2>{t('Préserver le stockage')}</h2>
         <p>
-          Le navigateur peut évincer les données. Une demande de persistance réduit ce risque
-          lorsqu’elle est acceptée.
+          {t(
+            'Le navigateur peut évincer les données. Une demande de persistance réduit ce risque lorsqu’elle est acceptée.',
+          )}
         </p>
         <button
           onClick={() =>
@@ -102,46 +116,46 @@ export function SettingsPage() {
             )
           }
         >
-          Demander la persistance
+          {t('Demander la persistance')}
         </button>
       </section>
       <section className="card">
-        <h2>Lieux enregistrés</h2>
-        {!places.length && <p>Aucun lieu enregistré.</p>}
+        <h2>{t('Lieux enregistrés')}</h2>
+        {!places.length && <p>{t('Aucun lieu enregistré.')}</p>}
         {places.map((p) => (
           <article className="dataset" key={p.id}>
             <strong>{p.name}</strong>
             <small>
               {p.latitude.toFixed(4)}, {p.longitude.toFixed(4)}
             </small>
-            <button onClick={() => void db.savedPlaces.delete(p.id)}>Supprimer</button>
+            <button onClick={() => void db.savedPlaces.delete(p.id)}>{t('Supprimer')}</button>
           </article>
         ))}
       </section>
       <section className="card">
-        <h2>Scénarios enregistrés</h2>
-        {!scenarios.length && <p>Aucun scénario enregistré.</p>}
+        <h2>{t('Scénarios enregistrés')}</h2>
+        {!scenarios.length && <p>{t('Aucun scénario enregistré.')}</p>}
         {scenarios.map((s) => (
           <article className="dataset" key={s.id}>
             <strong>{s.name}</strong>
             <small>
-              {s.origins.length} origine(s) · {s.date} · {s.time}
+              {s.origins.length} {t('origine(s) ·')} {s.date} · {s.time}
             </small>
             <Link to={`${s.origins.length > 1 ? '/comparaison' : '/'}?scenario=${s.id}`}>
-              Rouvrir ce scénario →
+              {t('Rouvrir ce scénario →')}
             </Link>
-            <button onClick={() => void db.savedScenarios.delete(s.id)}>Supprimer</button>
+            <button onClick={() => void db.savedScenarios.delete(s.id)}>{t('Supprimer')}</button>
           </article>
         ))}
       </section>
       <section className="card">
-        <h2>Effacement local</h2>
-        <p>Cette action supprime également les favoris et les ressources mises en cache.</p>
+        <h2>{t('Effacement local')}</h2>
+        <p>{t('Cette action supprime également les favoris et les ressources mises en cache.')}</p>
         <button className="danger" onClick={() => void erase()}>
-          Effacer toutes mes données
+          {t('Effacer toutes mes données')}
         </button>
       </section>
-      <p role="status">{message}</p>
+      <p role="status">{t(message)}</p>
     </main>
   );
 }
